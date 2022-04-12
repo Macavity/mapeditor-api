@@ -1,9 +1,11 @@
 package main
 
 import (
-	"fmt"
+	"Macavity/mapeditor-server/server"
 )
 
+var serverInstance = server.Server{}
+
 func main() {
-	fmt.Println("Map-Editor Server started.")
+	serverInstance.Run()
 }

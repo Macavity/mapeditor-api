@@ -43,7 +43,7 @@ services:
       - db_postgres
     volumes:
       - .:/app
-    command: /bin/sh -c "go run ."
+    command: /bin/sh -c "go run . 2>> log.stderr.log"
     ports:
       - "${APP_PORT}:8080"
     expose:

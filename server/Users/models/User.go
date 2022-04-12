@@ -1,7 +1,6 @@
 package models
 
 import (
-	"Macavity/mapeditor-server/server/TileMaps/models"
 	"gorm.io/gorm"
 )
 
@@ -14,5 +13,5 @@ type User struct {
 	Name  string `json:"name" gorm:"unique" validate:"required"`
 	Email string `json:"email" gorm:"unique"`
 
-	TileMaps []models.TileMap
+	//TileMaps []models.TileMap
 }

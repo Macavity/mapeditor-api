@@ -1,2 +1,19 @@
 
+### Retrieve all users
+
 GET http://localhost:8080/users
+
+
+### Create new User
+
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "name": "Macavity",
+  "email": "paneon.alex@gmail.com"
+}
+
+###
+
+

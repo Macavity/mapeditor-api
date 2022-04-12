@@ -3,11 +3,10 @@ package server
 import (
 	"Macavity/mapeditor-server/server/Users"
 	"Macavity/mapeditor-server/server/database"
-	"fmt"
+	"Macavity/mapeditor-server/server/logwrapper"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	log "github.com/sirupsen/logrus"
-	_ "gorm.io/driver/postgres"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"os"
 )
@@ -18,14 +17,17 @@ type Server struct {
 }
 
 func (server *Server) Run() {
-	server.initDotEnv()
-	server.initLogs()
+	logger := logwrapper.NewLogger(logrus.DebugLevel)
+	server.initDotEnv(logger)
 	server.initRoutes()
+	logger.Debugln("Init DB")
+	database.MigrateDatabase(logger)
 	database.Connect(os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_PORT"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
-	database.MigrateDatabase()
+	logger.Debugln("Run finished")
 }
 
 func (server *Server) initRoutes() {
+	logger := logwrapper.NewDebugLogger()
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*.html")
 
@@ -34,12 +36,12 @@ func (server *Server) initRoutes() {
 	err := router.Run()
 
 	if err != nil {
-		log.Warningln(err)
+		logger.Errorln(err)
 		return
 	}
 }
 
-func (server *Server) initDotEnv() {
+func (server *Server) initDotEnv(Logger *logwrapper.StandardLogger) {
 	env := os.Getenv("APP_ENV")
 	if "" == env {
 		env = "development"
@@ -56,25 +58,10 @@ func (server *Server) initDotEnv() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalln("Loading the .env file failed.")
+		Logger.Warningln("Loading the .env file failed.")
 		return
 	}
-}
 
-func (server *Server) initLogs() {
-	var file, err = os.OpenFile("logs.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatalln(err)
-		fmt.Println(err)
-	}
-	defer func(file *os.File) {
-		err := file.Close()
-		if err != nil {
-
-		}
-	}(file)
-
-	log.SetOutput(file)
-	log.SetLevel(log.DebugLevel)
-	log.Infoln("Logs initialised.")
+	Logger.Debug("Environment: ", server.Env)
+	Logger.Debugln("Dotenv loaded.")
 }

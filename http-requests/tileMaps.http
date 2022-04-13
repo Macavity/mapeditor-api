@@ -1,0 +1,21 @@
+
+### Retrieve all Maps
+
+GET http://localhost:8080/tile-maps
+
+
+### Create new Map
+
+POST http://localhost:8080/tile-maps
+Content-Type: application/json
+
+{
+  "name": "Test Map",
+  "userId": 1,
+  "width": 20,
+  "height": 20
+}
+
+###
+
+

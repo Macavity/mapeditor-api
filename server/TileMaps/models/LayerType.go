@@ -1,4 +1,4 @@
-package TileMaps
+package models
 
 type LayerType uint
 
